@@ -1,0 +1,11 @@
+
+
+
+
+*** Airfoil integration
+
+https://weblog.rogueamoeba.com/2011/04/06/airfoil-integration/
+
+#+BEGIN_EXAMPLE
+ To integrate with Airfoil, your application should handle five Applescript properties — track title, artist, album, duration, and logo — and three Applescript commands — playpause, next, and previous.
+#+END_EXAMPLE
