@@ -1,4 +1,4 @@
-# shairport-sync-metadata-reader
+# shairport-sync-metadata
 
 Shairport-sync metadata reader and consumer
 
@@ -9,3 +9,13 @@ Shairport-sync metadata reader and consumer
 ## Installing
 
 ...
+
+
+## Developing
+
+```
+pip3 install -e .
+cd bin/
+# Assumes metadata pipe at /tmp/shairport-sync-metadata
+python3 ./output_text.py
+````
