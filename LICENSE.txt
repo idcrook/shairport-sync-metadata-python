@@ -1,3 +1,8 @@
+
+
+Shairport Sync:
+Copyright (c) 2014–2018 Mike Brady <mikebrady@eircom.net>
+
 MIT License
 
 Copyright (c) 2018 David Crook

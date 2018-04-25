@@ -1,2 +1,11 @@
-# shairport-sync-metadata-reader-python
-implemention in python of shairport-sync metadata reader and consumer initially targetting Raspberry Pi
+# shairport-sync-metadata-reader
+
+Shairport-sync metadata reader and consumer
+
+## Usage
+
+...
+
+## Installing
+
+...
