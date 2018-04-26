@@ -1,4 +1,4 @@
 # -*- coding: utf-8 -*-
 
-
-print('hello')
+from shairport_sync_metadata import VERSION
+# print (VERSION)
