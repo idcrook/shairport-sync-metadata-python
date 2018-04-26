@@ -9,6 +9,7 @@ import logging
 import math
 import re
 import sys
+import tempfile
 
 from shairport_sync_metadata import reader
 from shairport_sync_metadata import decoder
@@ -35,6 +36,8 @@ logger = logging.getLogger(__name__)
 
 logger.info('testing')
 
+# started with code from
+# https://github.com/surekap/MMM-ShairportMetadata/blob/master/shairport-metadata.py
 
 def start_item(line):
     regex = r"<item><type>(([A-Fa-f0-9]{2}){4})</type><code>(([A-Fa-f0-9]{2}){4})</code><length>(\d*)</length>"
@@ -67,21 +70,25 @@ def read_data(line, length):
     #if length < 100: print (line, end="")
     try:
         data = base64.b64decode(line[:b64size])
-        # if length < 100: print (data)
+        # Assume it is a PICT and do not attempt to decode the binary data
+        if length > 1000:
+            # print (data[:4])
+            return data
         data = data.decode()
     except TypeError:
         data = ""
         pass
     except UnicodeDecodeError:
+        print(data)
         data = ""
         pass
     return data
 
 def guessImageMime(magic):
-
-    if magic.startswith('\xff\xd8'):
+    # print(magic[:4])
+    if magic.startswith(b'\xff\xd8'):
         return 'image/jpeg'
-    elif magic.startswith('\x89PNG\r\n\x1a\r'):
+    elif magic.startswith(b'\x89PNG\r\n\x1a\r'):
         return 'image/png'
     else:
         return "image/jpg"
@@ -147,13 +154,25 @@ if __name__ == "__main__":
             print (json.dumps({}))
             sys.stdout.flush()
         if (typ == "ssnc" and code == "PICT"):
+            # print(typ, code, length, len(data))
             if (len(data) == 0):
                 print (json.dumps({"image": ""}))
             else:
                 mime = guessImageMime(data)
-                #print (json.dumps({"image": "data:" + mime + ";base64," + base64.b64encode(data)}))
-                print (json.dumps({"image": "data:" + mime + ";base64,"}))
+                print(mime)
+                if (mime == 'image/png'):
+                    temp_file = tempfile.NamedTemporaryFile(prefix="image_", suffix=".png", delete=False)
+                elif  (mime == 'image/jpeg'):
+                    temp_file = tempfile.NamedTemporaryFile(prefix="image_", suffix=".jpeg", delete=False)
+                else:
+                    temp_file = tempfile.NamedTemporaryFile(prefix="image_", suffix=".jpg", delete=False)
+
+                with temp_file as file:
+                    file.write(data)  # this is not base64!
+                    logger.info('Wrote file {}'.format(temp_file.name))
+
             sys.stdout.flush()
+
         if (typ == "ssnc" and code == "mden"):
             logger.debug('metadata end')
             print (json.dumps(metadata))
