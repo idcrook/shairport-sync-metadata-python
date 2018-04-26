@@ -1,14 +1,22 @@
 
+** Format docs
+
+ - https://code.google.com/archive/p/ytrack/wikis/DMAP.wiki
+ - https://nto.github.io/AirPlay.html#audio-metadata
+ - http://nto.github.io/AirPlay.html#audio-remotecontrol
+
 
 ** Related libraries
 
+ - https://github.com/mikebrady/shairport-sync-metadata-reader C
  - https://github.com/surekap/MMM-ShairportMetadata python/JS
  - https://github.com/brookstalley/live-mir/ python UDP
  - https://github.com/luckydonald/shairport-decoder/ python
  - https://github.com/celeryclub/smartie-client python
  - https://github.com/idubnori/shairport-sync-trackinfo-reader .NET
- - https://github.com/mikebrady/shairport-sync-metadata-reader C
  - https://github.com/lbligh/Shairport-Sync-Hardware-Volume python
+ - https://github.com/roblan/shairport-sync-reader - node.js
+ - https://github.com/effektsvk/shairport-sync-metadata-webserver - python/html
 
 *** Airfoil integration
 
