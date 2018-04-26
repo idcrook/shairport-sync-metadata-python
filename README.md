@@ -19,3 +19,10 @@ cd bin/
 # Assumes metadata pipe at /tmp/shairport-sync-metadata
 python3 ./output_text.py
 ````
+
+## TODO
+
+ - [x] form python package structure
+ - [ ] metadata XML stream parser
+ - [ ] metadata track classes
+ - [ ] metadata coverart class
