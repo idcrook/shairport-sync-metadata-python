@@ -1,6 +1,14 @@
 
 
+** Related libraries
 
+ - https://github.com/surekap/MMM-ShairportMetadata python/JS
+ - https://github.com/brookstalley/live-mir/ python UDP
+ - https://github.com/luckydonald/shairport-decoder/ python
+ - https://github.com/celeryclub/smartie-client python
+ - https://github.com/idubnori/shairport-sync-trackinfo-reader .NET
+ - https://github.com/mikebrady/shairport-sync-metadata-reader C
+ - https://github.com/lbligh/Shairport-Sync-Hardware-Volume python
 
 *** Airfoil integration
 
