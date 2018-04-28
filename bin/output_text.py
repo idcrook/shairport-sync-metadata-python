@@ -7,6 +7,7 @@ import codecs
 import json
 import logging
 import math
+import os
 import re
 import sys
 import tempfile
@@ -17,10 +18,12 @@ from shairport_sync_metadata.metadata import TrackInfo
 
 
 # set up logging to file
+logging_filename = '{}.log'.format(os.path.join('/run/user', str(os.getuid()), os.path.basename(__file__)))
+print('-I- Using log file {}'.format(logging_filename), file=sys.stderr)
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
                     datefmt='%m-%d %H:%M',
-                    filename='/run/user/1000/output_text.log',
+                    filename=logging_filename,
                     filemode='w')
 # define a Handler which writes INFO messages or higher to the sys.stderr
 console = logging.StreamHandler()
