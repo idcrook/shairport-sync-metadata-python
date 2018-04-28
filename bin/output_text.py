@@ -9,6 +9,7 @@ import logging
 import math
 import os
 import re
+import shutil
 import sys
 import tempfile
 
@@ -16,9 +17,13 @@ from shairport_sync_metadata import reader
 from shairport_sync_metadata import decoder
 from shairport_sync_metadata.metadata import TrackInfo
 
+# configure tempfile dir
+name =  os.path.basename(__file__)
+tempdirname = tempfile.mkdtemp(prefix='shairport-sync-metadata-', dir=tempfile.tempdir)
+print (tempdirname)
 
 # set up logging to file
-logging_filename = '{}.log'.format(os.path.join('/run/user', str(os.getuid()), os.path.basename(__file__)))
+logging_filename = '{}.log'.format(os.path.join(tempdirname, os.path.basename(__file__)))
 print('-I- Using log file {}'.format(logging_filename), file=sys.stderr)
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
@@ -164,14 +169,14 @@ if __name__ == "__main__":
                 mime = guessImageMime(data)
                 print(mime)
                 if (mime == 'image/png'):
-                    temp_file = tempfile.NamedTemporaryFile(prefix="image_", suffix=".png", delete=False)
+                    temp_file = tempfile.NamedTemporaryFile(prefix="image_", suffix=".png", delete=False, dir=tempdirname)
                 elif  (mime == 'image/jpeg'):
-                    temp_file = tempfile.NamedTemporaryFile(prefix="image_", suffix=".jpeg", delete=False)
+                    temp_file = tempfile.NamedTemporaryFile(prefix="image_", suffix=".jpeg", delete=False, dir=tempdirname)
                 else:
-                    temp_file = tempfile.NamedTemporaryFile(prefix="image_", suffix=".jpg", delete=False)
+                    temp_file = tempfile.NamedTemporaryFile(prefix="image_", suffix=".jpg", delete=False, dir=tempdirname)
 
                 with temp_file as file:
-                    file.write(data)  # this is not base64!
+                    file.write(data)
                     logger.info('Wrote file {}'.format(temp_file.name))
 
             sys.stdout.flush()
@@ -181,3 +186,6 @@ if __name__ == "__main__":
             print (json.dumps(metadata))
             sys.stdout.flush()
             metadata = {}
+
+    # this never gets called in current code
+    shutil.rmtree(tempdir)
