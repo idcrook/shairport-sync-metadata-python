@@ -20,7 +20,6 @@ from shairport_sync_metadata.metadata import TrackInfo
 # configure tempfile dir
 name =  os.path.basename(__file__)
 tempdirname = tempfile.mkdtemp(prefix='shairport-sync-metadata-', dir=tempfile.tempdir)
-print (tempdirname)
 
 # set up logging to file
 logging_filename = '{}.log'.format(os.path.join(tempdirname, os.path.basename(__file__)))
