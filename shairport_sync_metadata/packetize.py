@@ -42,9 +42,13 @@ def read_data(line, length):
     try:
         data = base64.b64decode(line[:b64size])
     except TypeError:
-        logger.error('Type error on line(data_length={}): {}'.format(length, line))
+        logger.error('TypeError on line(data_length={}): {}'.format(length, line))
     except UnicodeDecodeError:
-        logger.error('Type error on line(data_length={}): {}'.format(length, line))
+        logger.error('UnicodeDecodeError on line(data_length={}): {}'.format(length, line))
+        print(data)
+        data = ""
+    except binascii.Error:
+        logger.error('binascii.Error on line(data_length={}): {}'.format(length, line))
         print(data)
         data = ""
     return data
