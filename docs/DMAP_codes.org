@@ -10,8 +10,10 @@ https://code.google.com/archive/p/ytrack/wikis/DMAP.wiki
 #+BEGIN_EXAMPLE
 cat itunes_specific_codes.raw | perl process_raw.pl > itunes_specific_codes.md
 cat dmap_types.raw | perl process_raw.pl > dmap_types.md
+cat daap_codes.raw | perl process_raw.pl > daap_codes.md
 #+END_EXAMPLE
 
 
- - =itunes_specific_codes.raw= : extensions from itunes
  - =dmap_types.raw= : decoder for ~type~ field
+ - =daap_codes.raw= : daap codes
+ - =itunes_specific_codes.raw= : extensions from itunes

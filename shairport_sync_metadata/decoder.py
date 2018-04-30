@@ -38,7 +38,7 @@ class MetadataDecoder(object):
             "pffr" : ["playfirstframereceived", cls.zero_byte_handler],
             "pvol" : ["playvolume", cls.play_volume_handler],
             "daid" : ["dacpid", cls.intHandler],
-            "acre" : ["activeremotetoken", cls.intHandler],
+            "acre" : ["activeremotetoken", cls.string_handler],
             "prgr" : ["playprogress", cls.progress_handler],
             "caps" : ["playstate", cls.one_byte_handler],
             "flsr" : ["flushtime", cls.rtptime_handler],
@@ -59,7 +59,7 @@ class MetadataDecoder(object):
             "asco" : ["songcompilation", cls.bool_handler],
             "asbr" : ["songbitrate", cls.two_byte_handler],
             "ascp" : ["songcomposer", cls.string_handler],
-            "asda" : ["songdateadded", cls.date_handler],
+            "asda" : ["songdateadded", cls.date_handler],  # often datetime.now()
             "aspl" : ["songdateplayed", cls.date_handler],
             "asdm" : ["songdatemodified", cls.date_handler],
             "asdc" : ["songdisccount", cls.two_byte_handler],
@@ -87,46 +87,62 @@ class MetadataDecoder(object):
             "asct" : ["songcategory", cls.string_handler],
             "ascn" : ["songcontentdescription", cls.string_handler],
             "ascr" : ["songcontentrating", cls.intHandler],
-            "asri" : ["singartistid", cls.intHandler],
+            "asri" : ["songartistid", cls.eight_byte_handler],
             "asai" : ["songalbumid", cls.intHandler],
             "askd" : ["songlastskipdate", cls.date_handler],
             "assn" : ["songsortname", cls.string_handler],
             "assu" : ["songsortalbum", cls.string_handler],
+            "asaa" : ["songalbumartist", cls.string_handler],
+            "asbk" : ["bookmarkable", cls.bool_handler],
+            "asbo" : ["songbookmark", cls.four_byte_handler],
+            "asdr" : ["songdatereleased", cls.date_handler],
+            "ased" : ["songextradata", cls.two_byte_handler],
+            "asgp" : ["songgapless", cls.bool_handler],
+            "ashp" : ["songhasbeenplayed", cls.bool_handler],
+            "asls" : ["songlongsize", cls.eight_byte_handler],
+            "aspu" : ["songpodcasturl", cls.string_handler],
+            "assa" : ["sortartist", cls.string_handler],
+            "assc" : ["sortcomposer", cls.string_handler],
+            "assl" : ["sortalbumartist", cls.string_handler],
+            "asss" : ["sortseriesname", cls.string_handler],
+
             "aeNV" : ["itunesnormvolume", cls.intHandler],
             "aePC" : ["itunesispodcast", cls.bool_handler],
             "aeHV" : ["ituneshasvideo", cls.bool_handler],
             "aeMK" : ["itunesmediakind", cls.intHandler],
             "aeSN" : ["itunesseriesname", cls.string_handler],
-            "aeEN" : ["itunesepisodenumber", cls.string_handler],
+            "aeEN" : ["itunesepisodenumberstring", cls.string_handler],
+            "aeSU" : ["itunesseasonnumber", cls.four_byte_handler],
+            "aeES" : ["itunesepisodesort", cls.four_byte_handler],
+            "aeMk" : ["itunesextendedmediakind", cls.four_byte_handler],
+            "aeGD" : ["itunesgaplessencdr", cls.four_byte_handler],
+            "aeGE" : ["itunesgaplessencdel", cls.four_byte_handler],
+            "aeGH" : ["itunesgaplessheur", cls.four_byte_handler],
+            "aeGR" : ["itunesgaplessresy", cls.eight_byte_handler],
+            "aeGU" : ["itunesgaplessdur", cls.eight_byte_handler],
+            "aeHD" : ["itunesishdvideo", cls.bool_handler],
+            "aeSE" : ["itunesstorepersid", cls.eight_byte_handler],
+            "aeXD" : ["itunesxid", cls.string_handler],
+            "aeDR" : ["itunesdrmuserid", cls.eight_byte_handler],
+            "aeND" : ["itunesnondrmuserid", cls.eight_byte_handler],
+            "aeK1" : ["itunesdrmkey1id", cls.eight_byte_handler],
+            "aeK2" : ["itunesdrmkey2id", cls.eight_byte_handler],
+            "aeDV" : ["itunesdrmversions", cls.four_byte_handler],
+            "aeDP" : ["itunesdrmplatformid", cls.four_byte_handler],
+            "aeAI" : ["itunesitmsartistid", cls.four_byte_handler],
+            "aePI" : ["itunesitmsplaylistid", cls.four_byte_handler],
+            "aeCI" : ["itunesitmscomposerid", cls.four_byte_handler],
+            "aeGI" : ["itunesitmsgenreid", cls.four_byte_handler],
 
         # found more unknowns during testing
-            "aeAI" : ["unknownaeAI", cls.string_handler],
             "aeCM" : ["unknownaeCM", cls.string_handler],
             "aeCR" : ["unknownaeCR", cls.string_handler],
             "aeCS" : ["unknownaeCS", cls.string_handler],
             "aeDL" : ["unknownaeDL", cls.string_handler],
-            "aeDP" : ["unknownaeDP", cls.string_handler],
-            "aeDR" : ["unknownaeDR", cls.string_handler],
-            "aeDV" : ["unknownaeDV", cls.string_handler],
-            "aeES" : ["unknownaeES", cls.string_handler],
             "aeFA" : ["unknownaeFA", cls.string_handler],
-            "aeGD" : ["unknownaeGD", cls.string_handler],
-            "aeGE" : ["unknownaeGE", cls.string_handler],
-            "aeGH" : ["unknownaeGH", cls.string_handler],
-            "aeGR" : ["unknownaeGR", cls.string_handler],
-            "aeGU" : ["unknownaeGU", cls.string_handler],
             "aeGs" : ["unknownaeGs", cls.string_handler],
-            "aeHD" : ["unknownaeHD", cls.string_handler],
-            "aeK1" : ["unknownaeK1", cls.string_handler],
-            "aeK2" : ["unknownaeK2", cls.string_handler],
             "aeMX" : ["unknownaeMX", cls.string_handler],
-            "aeMk" : ["unknownaeMk", cls.string_handler],
-            "aeND" : ["unknownaeND", cls.string_handler],
-            "aePI" : ["unknownaePI", cls.string_handler],
-            "aeSE" : ["unknownaeSE", cls.string_handler],
             "aeSI" : ["unknownaeSI", cls.eight_byte_handler],
-            "aeSU" : ["unknownaeSU", cls.string_handler],
-            "aeXD" : ["unknownaeXD", cls.string_handler],
             "aels" : ["unknownaels", cls.string_handler],
             "ajAE" : ["unknownajAE", cls.string_handler],
             "ajAS" : ["unknownajAS", cls.string_handler],
@@ -138,37 +154,24 @@ class MetadataDecoder(object):
             "amvc" : ["unknownamvc", cls.string_handler],
             "amvm" : ["unknownamvm", cls.string_handler],
             "amvn" : ["unknownamvn", cls.string_handler],
-            "asaa" : ["unknownasaa", cls.string_handler],
             "asac" : ["unknownasac", cls.string_handler],
             "asas" : ["unknownasas", cls.string_handler],
-            "asbk" : ["unknownasbk", cls.string_handler],
-            "asdr" : ["unknownasdr", cls.four_byte_handler],
-            "ased" : ["unknownased", cls.string_handler],
             "ases" : ["unknownases", cls.string_handler],
-            "asgp" : ["unknownasgp", cls.string_handler],
-            "ashp" : ["unknownashp", cls.string_handler],
             "askp" : ["unknownaskp", cls.string_handler],
             "aslr" : ["unknownaslr", cls.string_handler],
-            "asls" : ["unknownasls", cls.string_handler],
             "aspc" : ["unknownaspc", cls.string_handler],
-            "aspu" : ["unknownaspu", cls.string_handler],
             "asrs" : ["unknownasrs", cls.string_handler],
-            "assa" : ["unknownassa", cls.string_handler],
-            "assc" : ["unknownassc", cls.string_handler],
-            "assl" : ["unknownassl", cls.string_handler],
-            "asss" : ["unknownasss", cls.string_handler],
             "awrk" : ["unknownawrk", cls.string_handler],
 
-            "mext" : ["unknownmext", cls.string_handler],
-            "meia" : ["unknownmeia", cls.string_handler],
-            "meip" : ["unknownmeip", cls.string_handler]
+            "mext" : ["unknownmext", cls.two_byte_handler],
+            "meia" : ["unknownmeia", cls.four_byte_handler],
+            "meip" : ["unknownmeip", cls.four_byte_handler]
         }
         return MetadataDecoder.__instance
 
     def ParseItem(self, typ, code, rawItem):
         assert isinstance(rawItem, (bytes, bytearray))
 
-        type = typ
         rawData = rawItem
         # logger.debug("Looking up {}:{} {}".format(typ, code, rawData))
         try:
@@ -177,16 +180,29 @@ class MetadataDecoder(object):
             print("Key not found: %s (value %s)" % (code, rawData))
             return
 
-        data = fieldInfo[1](self, rawData)
+        # override handler on mdst for 'core'
+        if (typ == 'core' and code == 'mdst'):
+            data =  self.one_byte_handler(rawData)
+        else:
+            data = fieldInfo[1](self, rawData)
         fieldName = fieldInfo[0]
         logger.debug("Setting %s : %s to %s" % (code, fieldName, data))
 
-        item = {"type" : type, "code" : code, "name" : fieldName, "value" : data}
+        item = {"type" : typ, "code" : code, "name" : fieldName, "value" : data}
         return item
 
     def string_handler(self, rawData):
         try:
-            return rawData.decode("utf-8")
+            if rawData == b'\x00':
+                return 0
+            elif rawData == b'\x00\x00':
+                return 0
+            elif rawData == b'\x00\x00\x00\x00':
+                return 0
+            elif rawData == b'\x00\x00\x00\x00\x00\x00\x00\x00':
+                return 0
+            else:
+                return rawData.decode("utf-8")
         except UnicodeDecodeError:
             logger.debug('Unable to decode binary data {}'.format(rawData))
             return rawData
@@ -201,6 +217,7 @@ class MetadataDecoder(object):
         return 0
 
     def pictHandler(self, rawData):
+
         return 0
 
     def zero_byte_handler(self, rawData):
@@ -220,14 +237,39 @@ class MetadataDecoder(object):
     def eight_byte_handler(self, rawData):
         return (rawData[0] << 56) + (rawData[1] << 48) + (rawData[2] << 40) + (rawData[3] << 32) +(rawData[4] << 24) + (rawData[5] << 16) + (rawData[6] << 8) + rawData[7]
 
+    # http://www.neotitans.com/resources/python/python-unsigned-32bit-value.html
+    def to_int32_signed(self, x):
+        if x>0xFFFFFFFF:
+            raise OverflowError
+
+        if x>0x7FFFFFFF:
+            x=int(0x100000000-x)
+            if x<2147483648:
+                return -x
+            else:
+                return -2147483648
+        return x
+
     def date_handler(self, rawData):
-        return datetime.now()
+        intTime = self.four_byte_handler(rawData)
+        intTime_signed = self.to_int32_signed(intTime)
+        # an uninitialized value seems to be represented by
+        # decimal intTime : 2212144096 intTime 32-bit signed : -2082823200
+        # logger.debug('intTime : {} intTime 32-bit signed : {}'.format(intTime, intTime_signed))
+        if (intTime_signed < 0):
+            # intTime_31bit = int(bin(intTime_signed & 0x7fffffff), 2)
+            timestamp = datetime(1970, 1, 1) + timedelta(seconds=intTime_signed)
+        else:
+            timestamp = datetime(1970, 1, 1) + timedelta(seconds=intTime_signed)
+        # logger.debug(timestamp)
+        return timestamp
 
     # def time_handler(self, rawData):
     #     stringTime = rawData.decode("utf-8")
     #     logger.debug('time_handler: {}'.format(stringTime))
     #     try:
-    #         # need this approach since .fromtimestamp is ValueError: timestamp out of range for platform time_t
+    #         # need this approach since .fromtimestamp is ValueError: timestamp out of range for platform time    # https://stackoverflow.com/questions/36179914/timestamp-out-of-range-for-platform-localtime-gmtime-function
+    # OverflowError: timestamp out of range for platform time_t
     #         timestamp = datetime(1970, 1, 1) + timedelta(seconds=int(stringTime)/100)
     #         logger.debug(timestamp)
     #         return timestamp

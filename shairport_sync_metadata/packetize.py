@@ -62,7 +62,8 @@ def process_metadata(item):
         logger.info('Song Artist : {}'.format(item["value"]))
     if item["name"] == "itemname":
         logger.info('Item Name : {}'.format(item["value"]))
-
+    if item["name"] == "songdatereleased":
+        logger.info('Released : {}'.format(item["value"]))
 
 
 def Packetize(fifo, packet_handlers):
@@ -87,7 +88,8 @@ def Packetize(fifo, packet_handlers):
                 data = read_data(line3, length)
                 logger.debug('type={} code={} len={}'.format(typ, code, length))
                 if code != 'PICT':
-                    logger.debug('data={}'.format(data))
+                    # logger.debug('data={}'.format(data))
+                    pass
 
             # check some required parameters
             if (typ != 'core' and typ != 'ssnc'):
