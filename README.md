@@ -7,7 +7,7 @@ Shairport-sync metadata reader and consumer
 **Command line output**
 
 ```
-python3 ./bin/print_metadata.py -c /tmp/shairport-sync-metadata
+python3 ./bin/print_metadata.py --cleanup /tmp/shairport-sync-metadata
 ```
 
 
@@ -22,8 +22,9 @@ TBD: PyPi
 pip3 install -e .
 cd bin/
 # Assumes metadata pipe at /tmp/shairport-sync-metadata
-python3 ./output_text.py
-````
+cat /tmp/shairport-sync-metadata | python3 output_text.py
+python3 ./bin/print_metadata.py --verbose /tmp/shairport-sync-metadata
+```
 
 ## TODO
 
