@@ -1,0 +1,17 @@
+
+
+** Additional DMAP codes
+
+
+found on page
+
+https://code.google.com/archive/p/ytrack/wikis/DMAP.wiki
+
+#+BEGIN_EXAMPLE
+cat itunes_specific_codes.raw | perl process_raw.pl > itunes_specific_codes.md
+cat dmap_types.raw | perl process_raw.pl > dmap_types.md
+#+END_EXAMPLE
+
+
+ - =itunes_specific_codes.raw= : extensions from itunes
+ - =dmap_types.raw= : decoder for ~type~ field
