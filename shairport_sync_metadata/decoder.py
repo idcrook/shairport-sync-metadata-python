@@ -3,7 +3,7 @@
 __author__ = '@idcrook'
 
 
-from datetime import datetime
+from datetime import datetime, timedelta
 import logging
 
 from shairport_sync_metadata import VERSION
@@ -23,22 +23,30 @@ class MetadataDecoder(object):
 
         MetadataDecoder.__instance.fieldList = {
         # ssnc values
-            "PICT" : ["picture", cls.intHandler],
-            "mdst" : ["metadatastart", cls.time_handler],
+            "PICT" : ["picture", cls.pictHandler],
+            "pcen" : ["pictureend",  cls.rtptime_handler],
+            "pcst" : ["picturestart", cls.rtptime_handler],
+            "mdst" : ["metadatastart", cls.rtptime_handler],
+            "stal" : ["metadatastall", cls.string_handler],
+            "mden" : ["metadataend", cls.rtptime_handler],
             "snua" : ["useragent", cls.string_handler],
-            "mden" : ["metadataend", cls.time_handler],
+            "snam" : ["appleclientname", cls.string_handler],
             "pbeg" : ["playbegin", cls.zero_byte_handler],
-            "pfls" : ["playpause", cls.zero_byte_handler],
-            "prsm" : ["playstart", cls.zero_byte_handler],
-            "pffr" : ["playstart", cls.zero_byte_handler],
-
-            "pend" : ["plaend", cls.zero_byte_handler],
+            "pend" : ["playend", cls.zero_byte_handler],
+            "pfls" : ["playflush", cls.zero_byte_handler],
+            "prsm" : ["playresume", cls.zero_byte_handler],
+            "pffr" : ["playfirstframereceived", cls.zero_byte_handler],
             "pvol" : ["playvolume", cls.play_volume_handler],
             "daid" : ["dacpid", cls.intHandler],
-            "acre" : ["activeremote", cls.intHandler],
+            "acre" : ["activeremotetoken", cls.intHandler],
             "prgr" : ["playprogress", cls.progress_handler],
             "caps" : ["playstate", cls.one_byte_handler],
-            "flsr" : ["flushtime", cls.time_handler],
+            "flsr" : ["flushtime", cls.rtptime_handler],
+
+        # need better handlers
+            "clip" : ["clientip", cls.string_handler], # (value b'10.0.1.144')
+            "svip" : ["serverip", cls.string_handler], # (value b'10.0.1.62')
+            "dapo" : ["remoteportnumber", cls.string_handler], # (value b'3689')
 
         # Core values
             "mikd" : ["itemkind", cls.one_byte_handler],
@@ -91,11 +99,6 @@ class MetadataDecoder(object):
             "aeSN" : ["itunesseriesname", cls.string_handler],
             "aeEN" : ["itunesepisodenumber", cls.string_handler],
 
-        # need handlers
-            "clip" : ["unknownaeAI", cls.string_handler], # (value b'10.0.1.144')
-            "svip" : ["unknownaeCM", cls.string_handler], # (value b'10.0.1.62')
-            "dapo" : ["unknownaeCR", cls.string_handler], # (value b'3689')
-
         # found more unknowns during testing
             "aeAI" : ["unknownaeAI", cls.string_handler],
             "aeCM" : ["unknownaeCM", cls.string_handler],
@@ -121,7 +124,7 @@ class MetadataDecoder(object):
             "aeND" : ["unknownaeND", cls.string_handler],
             "aePI" : ["unknownaePI", cls.string_handler],
             "aeSE" : ["unknownaeSE", cls.string_handler],
-            "aeSI" : ["unknownaeSI", cls.string_handler],
+            "aeSI" : ["unknownaeSI", cls.eight_byte_handler],
             "aeSU" : ["unknownaeSU", cls.string_handler],
             "aeXD" : ["unknownaeXD", cls.string_handler],
             "aels" : ["unknownaels", cls.string_handler],
@@ -139,7 +142,7 @@ class MetadataDecoder(object):
             "asac" : ["unknownasac", cls.string_handler],
             "asas" : ["unknownasas", cls.string_handler],
             "asbk" : ["unknownasbk", cls.string_handler],
-            "asdr" : ["unknownasdr", cls.string_handler],
+            "asdr" : ["unknownasdr", cls.four_byte_handler],
             "ased" : ["unknownased", cls.string_handler],
             "ases" : ["unknownases", cls.string_handler],
             "asgp" : ["unknownasgp", cls.string_handler],
@@ -155,10 +158,8 @@ class MetadataDecoder(object):
             "assl" : ["unknownassl", cls.string_handler],
             "asss" : ["unknownasss", cls.string_handler],
             "awrk" : ["unknownawrk", cls.string_handler],
-            "mext" : ["unknownmext", cls.string_handler],
-            "pcen" : ["unknownpcen", cls.string_handler],
-            "pcst" : ["unknownpcst", cls.string_handler],
 
+            "mext" : ["unknownmext", cls.string_handler],
             "meia" : ["unknownmeia", cls.string_handler],
             "meip" : ["unknownmeip", cls.string_handler]
         }
@@ -176,9 +177,9 @@ class MetadataDecoder(object):
             print("Key not found: %s (value %s)" % (code, rawData))
             return
 
-        data = fieldInfo[1](self,rawData)
+        data = fieldInfo[1](self, rawData)
         fieldName = fieldInfo[0]
-        #logger.debug("Setting %s : %s to %s (%s)" % (code, fieldName, data, rawData))
+        logger.debug("Setting %s : %s to %s" % (code, fieldName, data))
 
         item = {"type" : type, "code" : code, "name" : fieldName, "value" : data}
         return item
@@ -197,6 +198,9 @@ class MetadataDecoder(object):
             return False
 
     def intHandler(self, rawData):
+        return 0
+
+    def pictHandler(self, rawData):
         return 0
 
     def zero_byte_handler(self, rawData):
@@ -219,17 +223,33 @@ class MetadataDecoder(object):
     def date_handler(self, rawData):
         return datetime.now()
 
-    def time_handler(self, rawData):
+    # def time_handler(self, rawData):
+    #     stringTime = rawData.decode("utf-8")
+    #     logger.debug('time_handler: {}'.format(stringTime))
+    #     try:
+    #         # need this approach since .fromtimestamp is ValueError: timestamp out of range for platform time_t
+    #         timestamp = datetime(1970, 1, 1) + timedelta(seconds=int(stringTime)/100)
+    #         logger.debug(timestamp)
+    #         return timestamp
+    #     except ValueError:
+    #         logger.warning('ValueError for value {}'.format(rawData))
+    #         return rawData
+
+    def rtptime_handler(self, rawData):
         stringTime = rawData.decode("utf-8")
+        logger.debug('rtptime_handler: {}'.format(stringTime))
         try:
-            return int(stringTime)
+            rtptime = int(stringTime)
+            return rtptime
         except ValueError:
+            logger.warning('ValueError for value {}'.format(rawData))
             return rawData
 
     def progress_handler(self, rawData):
         stringTimes = rawData.decode("utf-8")
         timeList = stringTimes.split("/")
         progress = {"start" : int(timeList[0]), "current" : int(timeList[1]), "end" : int(timeList[2])}
+        logger.debug('progress: {}'.format(progress))
         return progress
 
     def play_volume_handler(self, rawData):
