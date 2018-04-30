@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-# python3 ./print_metadata.py -c /tmp/shairport-sync-metadata
+# python3 ./print_metadata.py --cleanup /tmp/shairport-sync-metadata
 
 import argparse
 import logging
@@ -43,7 +43,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('-v', '--verbose', help="increase output verbosity",
                         action='count')
-    parser.add_argument('-c', '--clean', help="delete temporary directory and logfile at user interruption", action='store_true')
+    parser.add_argument('-c', '--cleanup', help="delete temporary directory and logfile at user interruption", action='store_true')
     parser.add_argument('fifo', nargs='?', default='/tmp/shairport-sync-metadata')
     args = parser.parse_args()
 
@@ -51,7 +51,7 @@ if __name__ == "__main__":
         console.setLevel(logging.DEBUG)
 
 default_handlers = []
-metadata_handlers = []
+metadata_handlers = default_handlers
 
 def process_fifo(fifo):
     logger.info('Processing named pipe: {fifopath}'.format(fifopath=fifo))
@@ -66,6 +66,6 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         sys.stdout.flush()
         sys.stderr.flush()
-        if args.clean:
+        if args.cleanup:
             logger.warn('Deleting tempdir {}'.format(tempdirname))
             shutil.rmtree(tempdirname)
