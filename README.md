@@ -4,11 +4,16 @@ Shairport-sync metadata reader and consumer
 
 ## Usage
 
-...
+**Command line output**
+
+```
+python3 ./bin/print_metadata.py -c /tmp/shairport-sync-metadata
+```
+
 
 ## Installing
 
-...
+TBD: PyPi
 
 
 ## Developing
@@ -23,6 +28,6 @@ python3 ./output_text.py
 ## TODO
 
  - [x] form python package structure
- - [ ] metadata XML stream parser
- - [ ] metadata track classes
- - [ ] metadata coverart class
+ - [x] metadata XML stream parser
+ - [ ] metadata coverart wrapper class
+ - [ ] event emitter on the parser, refactoring as appropriate

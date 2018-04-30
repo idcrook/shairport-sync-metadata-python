@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+# cat /tmp/shairport-sync-metadata | python3 output_text.py
+
 import base64
 import binascii
 import codecs
@@ -15,7 +17,6 @@ import tempfile
 
 from shairport_sync_metadata import reader
 from shairport_sync_metadata import decoder
-from shairport_sync_metadata.metadata import TrackInfo
 
 # configure tempfile dir
 name =  os.path.basename(__file__)

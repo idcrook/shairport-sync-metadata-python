@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-# python3 ./print_metadata.py /tmp/shairport-sync-metadata
+# python3 ./print_metadata.py -c /tmp/shairport-sync-metadata
 
 import argparse
 import logging

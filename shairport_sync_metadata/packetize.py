@@ -51,7 +51,15 @@ def read_data(line, length):
 
 
 def process_metadata(item):
-    pass
+
+    if item["name"] == "songalbum":
+        logger.info('Song Album : {}'.format(item["value"]))
+    if item["name"] == "songartist":
+        logger.info('Song Artist : {}'.format(item["value"]))
+    if item["name"] == "itemname":
+        logger.info('Item Name : {}'.format(item["value"]))
+
+
 
 def Packetize(fifo, packet_handlers):
 

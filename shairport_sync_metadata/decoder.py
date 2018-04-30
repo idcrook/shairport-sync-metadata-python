@@ -187,7 +187,7 @@ class MetadataDecoder(object):
         try:
             return rawData.decode("utf-8")
         except UnicodeDecodeError:
-            logger.error('Unable to decode binary data {}'.format(rawData))
+            logger.debug('Unable to decode binary data {}'.format(rawData))
             return rawData
 
     def bool_handler(self, rawData):
