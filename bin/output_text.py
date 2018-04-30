@@ -15,8 +15,7 @@ import shutil
 import sys
 import tempfile
 
-from shairport_sync_metadata import reader
-from shairport_sync_metadata import decoder
+from shairport_sync_metadata import VERSION as shairport_sync_metadata_version
 
 # configure tempfile dir
 name =  os.path.basename(__file__)
