@@ -1,7 +1,11 @@
 
+Live MIR code (MIT License):
+    Copyright (c) 2018 Brooks Talley https://github.com/brookstalley
+    See https://github.com/brookstalley/live-mir
 
-Shairport Sync:
-Copyright (c) 2014–2018 Mike Brady <mikebrady@eircom.net>
+Shairport Sync (MIT License):
+    Copyright (c) 2014–2018 Mike Brady <mikebrady@eircom.net>
+    See LICENSES in https://github.com/mikebrady/shairport-sync
 
 MIT License
 
