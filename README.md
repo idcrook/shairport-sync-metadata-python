@@ -24,6 +24,8 @@ TBD: PyPi
 ## Developing
 
 ```
+git clone https://github.com/idcrook/shairport-sync-metadata-python.git
+cd shairport-sync-metadata-python
 pip3 install -e .
 cd bin/
 # Assumes metadata pipe at /tmp/shairport-sync-metadata
@@ -33,9 +35,9 @@ python3 ./bin/print_metadata.py --verbose /tmp/shairport-sync-metadata
 
 ## TODO
 
- - [x] form python package structure
- - [x] metadata XML stream parser
- - [x] metadata coverart wrapper class
+ - [x] ~form python package structure~
+ - [x] ~metadata XML stream parser~
+ - [x] ~metadata coverart wrapper class~
  - [ ] event emitter on the parser, refactoring as appropriate
  - [ ] example app to display on character LCD
  - [ ] example app to display on graphical LCD
