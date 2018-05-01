@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 import logging
 
 from shairport_sync_metadata import VERSION
+from shairport_sync_metadata.CoverArt import CoverArt
 
 logger = logging.getLogger(__name__)
 
@@ -217,8 +218,9 @@ class MetadataDecoder(object):
         return 0
 
     def pictHandler(self, rawData):
-
-        return 0
+        cover_art = CoverArt(binary=rawData)
+        logger.debug('PICT {} size={}'.format(cover_art.as_dict(base64=False), len(cover_art.binary)))
+        return cover_art
 
     def zero_byte_handler(self, rawData):
         """Used for fields whose presence is the message"""
@@ -295,4 +297,13 @@ class MetadataDecoder(object):
         return progress
 
     def play_volume_handler(self, rawData):
-        return 9999999999
+        volumesString = rawData.decode("utf-8")
+        volumesList = volumesString.split(",")
+        volumes = {
+            'airplay_volume' : float(volumesList[0]),
+            'volume' : float(volumesList[1]),
+            'lowest_volume' : float(volumesList[2]),
+            'highest_volume' : float(volumesList[3]),
+        }
+        # logger.debug('volumes: {}'.format(volumes))
+        return volumes

@@ -2,6 +2,10 @@
 
 Shairport-sync metadata reader and consumer
 
+ - Python3 only.
+ - Tested on Raspberry Pi Model 1 B rev 2 with an add-on DAC.
+
+
 ## Usage
 
 **Command line output**
@@ -12,6 +16,7 @@ python3 ./bin/print_metadata.py --cleanup /tmp/shairport-sync-metadata
 
 
 ## Installing
+
 
 TBD: PyPi
 
@@ -30,5 +35,7 @@ python3 ./bin/print_metadata.py --verbose /tmp/shairport-sync-metadata
 
  - [x] form python package structure
  - [x] metadata XML stream parser
- - [ ] metadata coverart wrapper class
+ - [x] metadata coverart wrapper class
  - [ ] event emitter on the parser, refactoring as appropriate
+ - [ ] example app to display on character LCD
+ - [ ] example app to display on graphical LCD
