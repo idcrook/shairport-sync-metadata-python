@@ -17,6 +17,7 @@
  - https://github.com/lbligh/Shairport-Sync-Hardware-Volume python
  - https://github.com/roblan/shairport-sync-reader - node.js
  - https://github.com/effektsvk/shairport-sync-metadata-webserver - python/html
+ - https://github.com/john-a-harris/lcdtunes
 
 *** Airfoil integration
 
