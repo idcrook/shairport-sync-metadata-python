@@ -16,7 +16,7 @@ import sys
 import tempfile
 
 try:
-    from asciimatics.renderers import ColourImageFile, ImageFile  # pip install asciimatics
+    from asciimatics.renderers import ImageFile  # pip install asciimatics
     asciimatics_avail = True
 except ImportError:
     print(
