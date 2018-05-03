@@ -1,5 +1,11 @@
 # -*- coding: utf-8 -*-
 
+"""Provides CoverArt image wrapper class.
+
+It is intended as a sink for binary metadata for the "album art" picture that
+is provided in stream metadata.
+"""
+
 import base64
 from base64 import decodebytes, encodebytes
 

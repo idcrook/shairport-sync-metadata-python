@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
 
-__author__ = '@idcrook'
+"""This is the decoder module.
 
+This module cantains MetadataDecoder class, which decodes metadata information
+provided from shairport-sync. It assumes the metadata was encoded by an
+AirPlay-style server (such as iTunes) or shairport-sync itself.
+
+"""
 
 from datetime import datetime, timedelta
 import logging

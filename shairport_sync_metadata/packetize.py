@@ -1,5 +1,12 @@
 # -*- coding: utf-8 -*-
 
+"""This is the packetize module.
+
+It accesses metadata stream, parses it, and uses MetadataDecoder decoder to
+process metadata information, through the Packetize function.
+
+"""
+
 import base64
 import binascii
 import logging
@@ -55,7 +62,7 @@ def read_data(line, length):
 
 
 def process_metadata(item):
-
+    """Logs some designated interesting metadata"""
     if item["name"] == "songalbum":
         logger.info('Song Album : {}'.format(item["value"]))
     if item["name"] == "songartist":
@@ -66,8 +73,17 @@ def process_metadata(item):
         logger.info('Released : {}'.format(item["value"]))
 
 
-def Packetize(fifo, packet_handlers):
+def Packetize(fifo=None, packet_handlers=None):
+    """Read from metadata FIFO and parse metadata.
 
+    Keyword arguments:
+    fifo -- the fifo that the metadata is being shared on.
+    packet_handlers -- list of callbacks for designated metadata lifecycle
+    markers.
+
+    TODO: implement packet_handlers hooks.
+
+    """
     with open(fifo, 'r') as fi:
         while True:
             line = fi.readline()
@@ -96,13 +112,14 @@ def Packetize(fifo, packet_handlers):
                 logger.error('Unknown type "{}"'.format(typ))
 
 
-            # some special codes
+            # peek at some special codes
             if (typ == "ssnc" and code == "mdst"):
                 logger.info('metadata START')
             if (typ == "ssnc" and code == "mden"):
                 logger.info('metadata   END')
 
 
+            # parse this metadata item
             item = metadata_parser.ParseItem(typ, code, data)
             if (item is None):
                 logger.warning("Could not get valid metadata item for {}".format(data))
