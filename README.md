@@ -8,7 +8,7 @@ Shairport-sync metadata reader and consumer
 
 ## Usage
 
-**Command line output**
+Example using `print_metadata.py` script that comes with package:
 
 ```
 python3 ./bin/print_metadata.py --cleanup /tmp/shairport-sync-metadata
@@ -18,10 +18,14 @@ python3 ./bin/print_metadata.py --cleanup /tmp/shairport-sync-metadata
 ## Installing
 
 
-TBD: PyPi
+### Via `pip` / PyPi
+
+**TBD**
 
 
 ## Developing
+
+Using a git clone to develop locally:
 
 ```
 git clone https://github.com/idcrook/shairport-sync-metadata-python.git
@@ -29,8 +33,8 @@ cd shairport-sync-metadata-python
 pip3 install -e .
 cd bin/
 # Assumes metadata pipe at /tmp/shairport-sync-metadata
-cat /tmp/shairport-sync-metadata | python3 output_text.py
-python3 ./bin/print_metadata.py --verbose /tmp/shairport-sync-metadata
+cat /tmp/shairport-sync-metadata | python3 ./output_text.py
+python3 ./print_metadata.py --verbose /tmp/shairport-sync-metadata
 ```
 
 ## TODO
@@ -43,6 +47,7 @@ python3 ./bin/print_metadata.py --verbose /tmp/shairport-sync-metadata
  - [ ] example app to display on character LCD
  - [ ] example app to display on graphical LCD
 
+## More Examples
 
 ### Example `output_text.py` output
 
