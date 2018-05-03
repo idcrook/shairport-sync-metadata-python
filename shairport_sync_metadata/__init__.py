@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 """A python-based shairport-sync metadata parser/processor."""
 
 __author__ = 'David Crook'
@@ -22,4 +21,4 @@ logger = logging.getLogger(__name__)
 #logger.info('version={}'.format(VERSION))
 
 # clean up namespace
-del(there, version_file, logger)
+del (there, version_file, logger)

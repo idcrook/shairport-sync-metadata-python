@@ -105,12 +105,11 @@ setup(
         # Indicate who your project is intended for
         'Intended Audience :: Developers',
         'Topic :: Software Development :: Build Tools',
-
-	'Topic :: Multimedia',
-	'Topic :: Multimedia :: Sound/Audio',
-	'Topic :: Multimedia :: Sound/Audio :: Analysis',
+        'Topic :: Multimedia',
+        'Topic :: Multimedia :: Sound/Audio',
+        'Topic :: Multimedia :: Sound/Audio :: Analysis',
         'Topic :: Multimedia :: Sound/Audio :: Players',
-	'Topic :: Software Development :: Libraries',
+        'Topic :: Software Development :: Libraries',
         'Topic :: System :: Networking :: Monitoring',
         'Topic :: System :: Monitoring',
 
@@ -129,7 +128,8 @@ setup(
     # project page. What does your project relate to?
     #
     # Note that this is a string of words separated by whitespace, not a list.
-    keywords='shairport shairport-sync development airplay shairplay dmap daap metadata coverart',  # Optional
+    keywords=
+    'shairport shairport-sync development airplay shairplay dmap daap metadata coverart',  # Optional
 
     # You can just specify package directories manually here if your project is
     # simple. Or you can use find_packages().

@@ -1,22 +1,23 @@
 # -*- coding: utf-8 -*-
-
 """Provides CoverArt image wrapper class.
 
 It is intended as a sink for binary metadata for the "album art" picture that
 is provided in stream metadata.
 """
-
 import base64
-from base64 import decodebytes, encodebytes
+from base64 import encodebytes
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 # adapted from https://github.com/luckydonald/shairport-decoder/blob/master/shairportdecoder/metadata.py
-
 class CoverArt(object):
     def __init__(self, binary=None, mime=None, extension=None):
         self._binary = binary  # the actual file bytes
         self._base64 = None  # base64 encoding
-        self._mime = mime      # e.g. "image/png"
-        self._extension = extension # e.g. ".png"
+        self._mime = mime  # e.g. "image/png"
+        self._extension = extension  # e.g. "png"
 
     @property
     def base64(self):
@@ -33,9 +34,8 @@ class CoverArt(object):
         if self._binary:
             return self._binary
 
-
     def _guessImageMime(self, magic):
-        # print(magic[:4])
+        logger.debug(magic[:4])
         if magic.startswith(b'\xff\xd8'):
             return 'image/jpeg'
         elif magic.startswith(b'\x89PNG\r\n\x1a\r'):
@@ -56,9 +56,9 @@ class CoverArt(object):
     @property
     def extension(self):
         recognized_mime_types = {
-            'image/jpeg' : 'jpeg',
-            'image/png' : 'png',
-            'image/jpg' : 'jpg',
+            'image/jpeg': 'jpeg',
+            'image/png': 'png',
+            'image/jpg': 'jpg',
         }
         if self.mime in recognized_mime_types:
             self._extension = recognized_mime_types[self.mime]

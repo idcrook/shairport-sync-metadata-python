@@ -4,7 +4,6 @@
 This module cantains MetadataDecoder class, which decodes metadata information
 provided from shairport-sync. It assumes the metadata was encoded by an
 AirPlay-style server (such as iTunes) or shairport-sync itself.
-
 """
 
 from datetime import datetime, timedelta
@@ -15,11 +14,10 @@ from shairport_sync_metadata.CoverArt import CoverArt
 
 logger = logging.getLogger(__name__)
 
+
 # Code adapted from
 # https://github.com/brookstalley/live-mir/blob/master/metadataparser.py
 # (MIT License)
-
-
 class MetadataDecoder(object):
     __instance = None
 
@@ -142,33 +140,33 @@ class MetadataDecoder(object):
             "aeGI": ["itunesitmsgenreid", cls.four_byte_handler],
 
             # found more unknowns during testing
-            "aeCM": ["unknownaeCM", cls.string_handler],
-            "aeCR": ["unknownaeCR", cls.string_handler],
-            "aeCS": ["unknownaeCS", cls.string_handler],
-            "aeDL": ["unknownaeDL", cls.string_handler],
-            "aeFA": ["unknownaeFA", cls.string_handler],
-            "aeGs": ["unknownaeGs", cls.string_handler],
-            "aeMX": ["unknownaeMX", cls.string_handler],
+            "aeCM": ["unknownaeCM", cls.default_string_handler],
+            "aeCR": ["unknownaeCR", cls.default_string_handler],
+            "aeCS": ["unknownaeCS", cls.default_string_handler],
+            "aeDL": ["unknownaeDL", cls.default_string_handler],
+            "aeFA": ["unknownaeFA", cls.default_string_handler],
+            "aeGs": ["unknownaeGs", cls.default_string_handler],
+            "aeMX": ["unknownaeMX", cls.default_string_handler],
             "aeSI": ["unknownaeSI", cls.eight_byte_handler],
-            "aels": ["unknownaels", cls.string_handler],
-            "ajAE": ["unknownajAE", cls.string_handler],
-            "ajAS": ["unknownajAS", cls.string_handler],
-            "ajAT": ["unknownajAT", cls.string_handler],
-            "ajAV": ["unknownajAV", cls.string_handler],
-            "ajal": ["unknownajal", cls.string_handler],
-            "ajcA": ["unknownajcA", cls.string_handler],
-            "ajuw": ["unknownajuw", cls.string_handler],
-            "amvc": ["unknownamvc", cls.string_handler],
-            "amvm": ["unknownamvm", cls.string_handler],
-            "amvn": ["unknownamvn", cls.string_handler],
-            "asac": ["unknownasac", cls.string_handler],
-            "asas": ["unknownasas", cls.string_handler],
-            "ases": ["unknownases", cls.string_handler],
-            "askp": ["unknownaskp", cls.string_handler],
-            "aslr": ["unknownaslr", cls.string_handler],
-            "aspc": ["unknownaspc", cls.string_handler],
-            "asrs": ["unknownasrs", cls.string_handler],
-            "awrk": ["unknownawrk", cls.string_handler],
+            "aels": ["unknownaels", cls.default_string_handler],
+            "ajAE": ["unknownajAE", cls.default_string_handler],
+            "ajAS": ["unknownajAS", cls.default_string_handler],
+            "ajAT": ["unknownajAT", cls.default_string_handler],
+            "ajAV": ["unknownajAV", cls.default_string_handler],
+            "ajal": ["unknownajal", cls.default_string_handler],
+            "ajcA": ["unknownajcA", cls.default_string_handler],
+            "ajuw": ["unknownajuw", cls.default_string_handler],
+            "amvc": ["unknownamvc", cls.default_string_handler],
+            "amvm": ["unknownamvm", cls.default_string_handler],
+            "amvn": ["unknownamvn", cls.default_string_handler],
+            "asac": ["unknownasac", cls.two_byte_handler],
+            "asas": ["unknownasas", cls.default_string_handler],
+            "ases": ["unknownases", cls.default_string_handler],
+            "askp": ["unknownaskp", cls.default_string_handler],
+            "aslr": ["unknownaslr", cls.default_string_handler],
+            "aspc": ["unknownaspc", cls.default_string_handler],
+            "asrs": ["unknownasrs", cls.default_string_handler],
+            "awrk": ["unknownawrk", cls.default_string_handler],
             "mext": ["unknownmext", cls.two_byte_handler],
             "meia": ["unknownmeia", cls.four_byte_handler],
             "meip": ["unknownmeip", cls.four_byte_handler]
@@ -183,7 +181,8 @@ class MetadataDecoder(object):
         try:
             fieldInfo = self.fieldList[code]
         except KeyError:
-            print("Key not found: %s (value %s)" % (code, rawData))
+            logger.warning('Key not found: {} (value {})'.format(
+                code, rawData))
             return
 
         # override handler on mdst for 'core'
@@ -197,18 +196,21 @@ class MetadataDecoder(object):
         item = {"type": typ, "code": code, "name": fieldName, "value": data}
         return item
 
+    def default_string_handler(self, rawData):
+        if rawData == b'\x00':
+            return 0
+        elif rawData == b'\x00\x00':
+            return 0
+        elif rawData == b'\x00\x00\x00\x00':
+            return 0
+        elif rawData == b'\x00\x00\x00\x00\x00\x00\x00\x00':
+            return 0
+
+        return self.string_handler(rawData)
+
     def string_handler(self, rawData):
         try:
-            if rawData == b'\x00':
-                return 0
-            elif rawData == b'\x00\x00':
-                return 0
-            elif rawData == b'\x00\x00\x00\x00':
-                return 0
-            elif rawData == b'\x00\x00\x00\x00\x00\x00\x00\x00':
-                return 0
-            else:
-                return rawData.decode("utf-8")
+            return rawData.decode("utf-8")
         except UnicodeDecodeError:
             logger.debug('Unable to decode binary data {}'.format(rawData))
             return rawData
