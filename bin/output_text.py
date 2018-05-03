@@ -15,20 +15,31 @@ import shutil
 import sys
 import tempfile
 
+try:
+    from asciimatics.renderers import ColourImageFile, ImageFile  # pip install asciimatics
+    asciimatics_avail = True
+except ImportError:
+    print(
+        '-W- for asciiart: [sudo] pip[3] install asciimatics', file=sys.stderr)
+    asciimatics_avail = False
+
 from shairport_sync_metadata import VERSION as shairport_sync_metadata_version
 
 # configure tempfile dir
-name =  os.path.basename(__file__)
-tempdirname = tempfile.mkdtemp(prefix='shairport-sync-metadata-', dir=tempfile.tempdir)
+name = os.path.basename(__file__)
+tempdirname = tempfile.mkdtemp(
+    prefix='shairport-sync-metadata-', dir=tempfile.tempdir)
 
 # set up logging to file
-logging_filename = '{}.log'.format(os.path.join(tempdirname, os.path.basename(__file__)))
+logging_filename = '{}.log'.format(
+    os.path.join(tempdirname, os.path.basename(__file__)))
 print('-I- Using log file {}'.format(logging_filename), file=sys.stderr)
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
-                    datefmt='%m-%d %H:%M',
-                    filename=logging_filename,
-                    filemode='w')
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
+    datefmt='%m-%d %H:%M',
+    filename=logging_filename,
+    filemode='w')
 # define a Handler which writes INFO messages or higher to the sys.stderr
 console = logging.StreamHandler()
 console.setLevel(logging.DEBUG)
@@ -46,6 +57,7 @@ logger.info('testing')
 # started with code from
 # https://github.com/surekap/MMM-ShairportMetadata/blob/master/shairport-metadata.py
 
+
 def start_item(line):
     regex = r"<item><type>(([A-Fa-f0-9]{2}){4})</type><code>(([A-Fa-f0-9]{2}){4})</code><length>(\d*)</length>"
     matches = re.findall(regex, line)
@@ -61,6 +73,7 @@ def start_item(line):
     length = int(matches[0][4])
     return (typ, code, length)
 
+
 def start_data(line):
     # logger.debug(line)
     try:
@@ -71,9 +84,10 @@ def start_data(line):
         return -1
     return 0
 
+
 def read_data(line, length):
     # convert to base64 size
-    b64size = 4*math.ceil((length)/3) ;
+    b64size = 4 * math.ceil((length) / 3)
     #if length < 100: print (line, end="")
     try:
         data = base64.b64decode(line[:b64size])
@@ -91,6 +105,7 @@ def read_data(line, length):
         pass
     return data
 
+
 def guessImageMime(magic):
     # print(magic[:4])
     if magic.startswith(b'\xff\xd8'):
@@ -100,6 +115,7 @@ def guessImageMime(magic):
     else:
         return "image/jpg"
 
+
 # cat /tmp/shairport-sync-metadata | /usr/bin/python3 ./output_text.py
 if __name__ == "__main__":
 
@@ -107,7 +123,7 @@ if __name__ == "__main__":
     fi = sys.stdin
     while True:
         line = sys.stdin.readline()
-        if not line:    #EOF
+        if not line:  #EOF
             break
         #print(line, end="")
         sys.stdout.flush()
@@ -154,35 +170,53 @@ if __name__ == "__main__":
 
         if (typ == "ssnc" and code == "pfls"):
             metadata = {}
-            print (json.dumps({}))
+            print(json.dumps({}))
             sys.stdout.flush()
         if (typ == "ssnc" and code == "pend"):
             metadata = {}
-            print (json.dumps({}))
+            print(json.dumps({}))
             sys.stdout.flush()
         if (typ == "ssnc" and code == "PICT"):
             # print(typ, code, length, len(data))
             if (len(data) == 0):
-                print (json.dumps({"image": ""}))
+                print(json.dumps({"image": ""}))
             else:
                 mime = guessImageMime(data)
                 print(mime)
                 if (mime == 'image/png'):
-                    temp_file = tempfile.NamedTemporaryFile(prefix="image_", suffix=".png", delete=False, dir=tempdirname)
-                elif  (mime == 'image/jpeg'):
-                    temp_file = tempfile.NamedTemporaryFile(prefix="image_", suffix=".jpeg", delete=False, dir=tempdirname)
+                    temp_file = tempfile.NamedTemporaryFile(
+                        prefix="image_",
+                        suffix=".png",
+                        delete=False,
+                        dir=tempdirname)
+                elif (mime == 'image/jpeg'):
+                    temp_file = tempfile.NamedTemporaryFile(
+                        prefix="image_",
+                        suffix=".jpeg",
+                        delete=False,
+                        dir=tempdirname)
                 else:
-                    temp_file = tempfile.NamedTemporaryFile(prefix="image_", suffix=".jpg", delete=False, dir=tempdirname)
+                    temp_file = tempfile.NamedTemporaryFile(
+                        prefix="image_",
+                        suffix=".jpg",
+                        delete=False,
+                        dir=tempdirname)
 
                 with temp_file as file:
                     file.write(data)
+                    file.close()
                     logger.info('Wrote file {}'.format(temp_file.name))
+                    if asciimatics_avail:
+                        logger.debug('loading image for ascii art')
+                        asciimatics_img = ImageFile(
+                            temp_file.name, height=22, colours=16)
+                        print(asciimatics_img)
 
             sys.stdout.flush()
 
         if (typ == "ssnc" and code == "mden"):
             logger.debug('metadata end')
-            print (json.dumps(metadata))
+            print(json.dumps(metadata))
             sys.stdout.flush()
             metadata = {}
 
