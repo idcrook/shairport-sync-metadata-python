@@ -212,7 +212,7 @@ class MetadataDecoder(object):
         try:
             return rawData.decode("utf-8")
         except UnicodeDecodeError:
-            logger.debug('Unable to decode binary data {}'.format(rawData))
+            logger.warning('Unable to decode binary data {}'.format(rawData))
             return rawData
 
     def bool_handler(self, rawData):
@@ -226,7 +226,7 @@ class MetadataDecoder(object):
 
     def pictHandler(self, rawData):
         cover_art = CoverArt(binary=rawData)
-        if cover_art.binary:
+        if cover_art.binary is not None:
             size = len(cover_art.binary)
         else:
             size = 0
